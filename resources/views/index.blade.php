@@ -56,57 +56,6 @@
                     <i class="bi bi-moon fs-5" id="themeIcon"></i>
                 </button>
 
-                <!-- Notifications -->
-                <div class="dropdown">
-                    <button class="btn btn-link text-light p-0 border-0 shadow-none text-decoration-none position-relative" id="notificationMenu" data-bs-toggle="dropdown" aria-expanded="false" title="اعلان‌ها">
-                        <i class="bi bi-bell fs-5"></i>
-                        <span id="notificationBadgeMain" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-dark rounded-circle">
-                            <span class="visually-hidden">unread messages</span>
-                        </span>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow p-0 notification-menu" aria-labelledby="notificationMenu" style="width: 320px; max-height: 400px; overflow-y: auto;">
-                        <div class="p-3 border-bottom border-secondary d-flex justify-content-between align-items-center">
-                            <div class="d-flex align-items-center gap-2">
-                                <h6 class="m-0">اعلان‌ها</h6>
-                                <span id="notificationBadgeHeader" class="badge bg-danger rounded-pill">۳</span>
-                            </div>
-                            <a href="#" id="markAllReadBtn" class="text-decoration-none small text-secondary">خواندن همه</a>
-                        </div>
-                        <ul class="list-unstyled mb-0">
-                            <li>
-                                <a class="dropdown-item p-3 d-flex gap-3 align-items-center border-bottom border-secondary text-wrap" href="#">
-                                    <img src="https://ui-avatars.com/api/?name=User&background=random" alt="User" class="rounded-circle" width="40" height="40">
-                                    <div>
-                                        <div class="fw-bold mb-1">خرید جدید ثبت شد</div>
-                                        <div class="text-muted small">۱۰ دقیقه پیش</div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item p-3 d-flex gap-3 align-items-center border-bottom border-secondary text-wrap" href="#">
-                                    <img src="https://ui-avatars.com/api/?name=System&background=random" alt="System" class="rounded-circle" width="40" height="40">
-                                    <div>
-                                        <div class="fw-bold mb-1">بروزرسانی سیستم موفقیت آمیز بود</div>
-                                        <div class="text-muted small">۲ ساعت پیش</div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item p-3 d-flex gap-3 align-items-center text-wrap" href="#">
-                                    <img src="https://ui-avatars.com/api/?name=Support&background=random" alt="Support" class="rounded-circle" width="40" height="40">
-                                    <div>
-                                        <div class="fw-bold mb-1">تیکت جدید از طرف مشتری</div>
-                                        <div class="text-muted small">۱ روز پیش</div>
-                                    </div>
-                                </a>
-                            </li>
-                        </ul>
-                        <div class="p-2 border-top border-secondary text-center">
-                            <a href="#" class="text-decoration-none small text-light">مشاهده همه اعلان‌ها</a>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- User Dropdown -->
                 <div class="dropdown">
                     <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle outline-none gap-2" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
