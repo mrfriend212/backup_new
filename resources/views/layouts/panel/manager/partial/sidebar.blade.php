@@ -14,9 +14,9 @@
 
         <!-- Logout Button fixed at bottom of sidebar -->
         <div class="mt-auto px-3 border-top border-secondary pt-3 pb-3 pb-md-0">
-            <button class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2">
+            <a href="{{ route('logout') }}" class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2">
                 <i class="bi bi-box-arrow-right"></i> <span>خروج</span>
-            </button>
+            </a>
         </div>
     </div>
 </nav>
