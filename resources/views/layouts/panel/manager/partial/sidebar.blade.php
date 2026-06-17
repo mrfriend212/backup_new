@@ -6,8 +6,8 @@
     <div class="offcanvas-body d-flex flex-column h-100 w-100 p-0 py-md-3">
         <ul class="nav flex-column mb-auto px-2 sidebar-nav mt-3 mt-md-0">
             <li class="nav-item">
-                <a class="nav-link active rounded d-flex align-items-center mb-1 text-white gap-3" href="{{ url('dashboard') }}" target="main-frame">
-                    <i class="bi bi-speedometer2 fs-5"></i> <span>داشبورد</span>
+                <a class="nav-link active rounded d-flex align-items-center mb-1 text-white gap-3" href="{{ route('panel.manager.dashboard') }}" target="main-frame">
+                    <i class="bi bi-speedometer2 fs-5"></i> <span>داشبورد مدیر</span>
                 </a>
             </li>
         </ul>

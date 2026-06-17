@@ -28,7 +28,9 @@
                 <h5 class="card-title mb-0 fw-bold">عنوان باکس ساده</h5>
             </div>
             <div class="card-body">
-                <p class="text-secondary mb-0">محتوای باکس ساده در اینجا قرار می‌گیرد.</p>
+                <p class="text-secondary mb-0">
+                    <h1>نوع کاربر : {{auth()->user()->user_type}}</h1>
+                </p>
             </div>
         </div>
     </div>

@@ -9,7 +9,11 @@ class AuthController extends Controller
 {
     public function showLogin()
     {
-        return view('layouts.auth.login');
+        if(auth()->user() !== null) {
+            abort('404');
+        }else {
+            return view('layouts.auth.login');
+        }
     }
 
     public function login(Request $request)
@@ -42,9 +46,5 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return to_route('showLogin');
-    }
-
-    public function showDashboard() {
-        return view('dashboard');
     }
 }

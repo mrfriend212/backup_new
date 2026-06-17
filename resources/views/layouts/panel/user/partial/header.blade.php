@@ -18,19 +18,19 @@
             </button>
 
             <!-- Global Search -->
-            <div class="d-none d-md-flex align-items-center flex-grow-1 px-3">
+            <!-- <div class="d-none d-md-flex align-items-center flex-grow-1 px-3">
                 <div class="position-relative w-100" style="max-width: 400px;">
                     <div class="input-group input-group-sm">
                         <span class="input-group-text bg-dark border-secondary text-secondary border-end-0"><i class="bi bi-search"></i></span>
                         <input type="text" class="form-control bg-dark border-secondary text-light shadow-none border-start-0" id="globalSearchInput" placeholder="جستجو در سیستم..." autocomplete="off" style="box-shadow: none !important; border-right-color: transparent;">
                     </div>
                     <div id="searchResultsDropdown" class="dropdown-menu dropdown-menu-dark w-100 shadow mt-1 p-0" style="display: none; z-index: 1050;">
-                        <div class="list-group list-group-flush rounded" id="searchResultsList" style="max-height: 300px; overflow-y: auto;">
+                        <div class="list-group list-group-flush rounded" id="searchResultsList" style="max-height: 300px; overflow-y: auto;"> -->
                             <!-- Search results will be injected here -->
-                        </div>
+                        <!-- </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             <!-- Left side Controls (End in RTL) -->
             <div class="d-flex align-items-center ms-auto p-3 gap-3">
@@ -43,10 +43,10 @@
                 <div class="dropdown">
                     <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle outline-none gap-2" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-person-circle fs-4"></i>
-                        <span class="d-none d-sm-inline">ادمین سیستم</span>
+                        <span class="d-none d-sm-inline">{{ auth()->user()->name }} {{auth()->user()->family}}</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow" aria-labelledby="userMenu">
-                        <li><a class="dropdown-item d-flex align-items-center gap-2" href="#"><i class="bi bi-person"></i> پروفایل</a></li>
+                        <li><a class="dropdown-item d-flex align-items-center gap-2" href="#"><i class="bi bi-person"></i>پروفایل کاربر</a></li>
                         <li><a class="dropdown-item d-flex align-items-center gap-2" href="#"><i class="bi bi-gear"></i> تنظیمات</a></li>
                         <li>
                             <hr class="dropdown-divider">
