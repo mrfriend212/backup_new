@@ -3,3 +3,5 @@
 
    <!-- Custom Scripts -->
     @yield('script') 
+
+    @livewireScripts

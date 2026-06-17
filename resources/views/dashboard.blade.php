@@ -1,18 +1,20 @@
+<?php
+
+use Livewire\Component;
+
+new class extends Component
+{
+    //
+};
+?>
+
 @extends('layouts.page.app')
 
 @section('title')
     داشبورد
 @endsection
 
-@section('body')
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-transparent py-3">
-            <h5 class="card-title mb-0 fw-bold">عنوان باکس ساده</h5>
-        </div>
-        <div class="card-body">
-            <p class="text-secondary mb-0">
-                <h1>داشبورد</h1>
-            </p>
-        </div>
-    </div>
-@endsection
+<div>
+    <h1>Dashboard</h1>
+    <p>Welcome to the dashboard page!</p>
+</div>

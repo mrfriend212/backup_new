@@ -10,4 +10,6 @@
     <link rel="stylesheet" href="{{ asset('assets/src/style.css') }}">
 
     @yield('css')
+
+    @livewireStyles
 </head>

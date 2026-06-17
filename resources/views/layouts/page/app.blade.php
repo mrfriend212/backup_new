@@ -13,7 +13,7 @@
         <h4 class="fw-bold mb-4">@yield('title')</h4>
 
         <!-- Content Body -->
-         @yield('body')
+         {{ $slot }}
     </div>
 
     @include('layouts.page.partial.script')
