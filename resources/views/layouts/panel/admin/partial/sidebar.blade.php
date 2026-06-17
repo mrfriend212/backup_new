@@ -10,6 +10,11 @@
                     <i class="bi bi-speedometer2 fs-5"></i> <span>داشبورد ادمین</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link rounded d-flex align-items-center mb-1 text-white gap-3" href="{{ route('panel.admin.another') }}" target="main-frame">
+                    <i class="bi bi-speedometer2 fs-5"></i> <span>صفحه داخلی دیگر</span>
+                </a>
+            </li>
         </ul>
 
         <!-- Logout Button fixed at bottom of sidebar -->

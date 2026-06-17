@@ -21,6 +21,9 @@ Route::middleware(['auth','not_direct_access_to_page'])->prefix('panel/admin')->
     Route::get('/dashboard', function(){
         return view('dashboard');
     })->name('dashboard');
+    Route::get('/another', function(){
+        return view('another');
+    })->name('another');
 });
 
 
