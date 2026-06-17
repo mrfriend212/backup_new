@@ -43,4 +43,8 @@ class AuthController extends Controller
 
         return to_route('showLogin');
     }
+
+    public function showDashboard() {
+        return view('dashboard');
+    }
 }

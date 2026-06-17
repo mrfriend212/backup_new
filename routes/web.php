@@ -29,9 +29,7 @@ Route::get('/', function () {
 
 /********  Admin Routes  *********/
 Route::middleware(['auth'])->prefix('panel/admin')->name('panel.admin.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('index');
-    })->name('dashboard');
+    Route::get('/dashboard', [App\Http\Controllers\AuthController::class, 'showDashboard'])->name('showDashboard');
 });
 
 
