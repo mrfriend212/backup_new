@@ -46,7 +46,7 @@
                         <span class="d-none d-sm-inline">{{ auth()->user()->name }} {{auth()->user()->family}}</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow" aria-labelledby="userMenu">
-                        <li><a class="dropdown-item d-flex align-items-center gap-2" href="#"><i class="bi bi-person"></i>پروفایل مدیر</a></li>
+                        <li><a class="dropdown-item d-flex align-items-center gap-2" href="#"><i class="bi bi-person"></i>پروفایل</a></li>
                         <li><a class="dropdown-item d-flex align-items-center gap-2" href="#"><i class="bi bi-gear"></i> تنظیمات</a></li>
                         <li>
                             <hr class="dropdown-divider">

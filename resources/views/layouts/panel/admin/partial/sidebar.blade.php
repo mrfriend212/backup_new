@@ -7,12 +7,7 @@
         <ul class="nav flex-column mb-auto px-2 sidebar-nav mt-3 mt-md-0">
             <li class="nav-item">
                 <a class="nav-link active rounded d-flex align-items-center mb-1 text-white gap-3" href="{{ route('panel.admin.dashboard') }}" target="main-frame">
-                    <i class="bi bi-speedometer2 fs-5"></i> <span>داشبورد ادمین</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link rounded d-flex align-items-center mb-1 text-white gap-3" href="{{ route('panel.admin.another') }}" target="main-frame">
-                    <i class="bi bi-speedometer2 fs-5"></i> <span>صفحه داخلی دیگر</span>
+                    <i class="bi bi-speedometer2 fs-5"></i> <span>داشبورد</span>
                 </a>
             </li>
         </ul>

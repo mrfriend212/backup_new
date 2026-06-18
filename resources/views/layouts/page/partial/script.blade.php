@@ -2,6 +2,6 @@
     <script src="{{ asset('assets/lib/bootstrap/bootstrap.bundle.min.js') }}"></script>
 
    <!-- Custom Scripts -->
-    @yield('script') 
+    @yield('script')
 
     @livewireScripts

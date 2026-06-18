@@ -12,4 +12,5 @@
     @yield('css')
 
     @livewireStyles
+    
 </head>

@@ -18,26 +18,17 @@ Route::get('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->n
 
 /********  Admin Routes  *********/
 Route::middleware(['auth','not_direct_access_to_page'])->prefix('panel/admin')->name('panel.admin.')->group(function () {
-    Route::get('/dashboard', function(){
-        return view('dashboard');
-    })->name('dashboard');
-    Route::get('/another', function(){
-        return view('another');
-    })->name('another');
+    Route::livewire('/dahboard', 'pages::admin.dashboard')->name('dashboard');
 });
 
 
 /********  Manager Routes  *********/
 Route::middleware(['auth','not_direct_access_to_page'])->prefix('panel/manager')->name('panel.manager.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::livewire('/dahboard', 'pages::manager.dashboard')->name('dashboard');
 });
 
 
 /********  User Routes  *********/
 Route::middleware(['auth','not_direct_access_to_page'])->prefix('panel/user')->name('panel.user.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::livewire('/dahboard', 'pages::user.dashboard')->name('dashboard');
 });

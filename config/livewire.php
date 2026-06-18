@@ -30,7 +30,7 @@ return [
     */
 
     'component_namespaces' => [
-        'layouts' => resource_path('views/layouts/page'),
+        'layouts' => resource_path('views/layouts'),
         'pages' => resource_path('views/pages'),
     ],
 
@@ -44,7 +44,7 @@ return [
     |
     */
 
-    'component_layout' => 'layouts.page.app',
+    'component_layout' => 'layouts::page.app',
 
     /*
     |---------------------------------------------------------------------------
@@ -69,8 +69,8 @@ return [
     */
 
     'make_command' => [
-        'type' => 'sfc', // Options: 'sfc', 'mfc', 'class'
-        'emoji' => true, // Options: true, false
+        'type' => 'mfc', // Options: 'sfc', 'mfc', 'class'
+        'emoji' => false, // Options: true, false
         'with' => [
             'js' => false,
             'css' => false,
