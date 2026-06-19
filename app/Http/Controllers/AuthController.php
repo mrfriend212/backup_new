@@ -26,14 +26,25 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-        // 2. Attempt to authenticate        
+        // 2. Add status condition to credentials
+        $credentials['status'] = 'active';
+
+        // 3. Attempt to authenticate
         if (auth()->attempt($credentials)) {
             $request->session()->regenerate();
-
             return redirect('/');
         } else {
+            // Check if user exists but is inactive
+            $user = \App\Models\User::where('username', $request->username)->first();
+            
+            if ($user && $user->status === 'deactive') {
+                return back()->withErrors([
+                    'message' => 'کاربری غیر فعال است. با پشتیبانی تماس بگیرید.',
+                ])->onlyInput('username');
+            }
+            
             return back()->withErrors([
-                'username' => 'نام کاربری یا رمز عبور اشتباه است.',
+                'message' => 'نام کاربری یا رمز عبور اشتباه است.',
             ])->onlyInput('username');
         }
     }

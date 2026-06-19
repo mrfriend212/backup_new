@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('username');
             $table->string('password');
             $table->enum('user_type', ['admin', 'manager', 'user'])->default('user');
+            $table->enum('status', ['active', 'deactive'])->default('active');
             $table->rememberToken();
             $table->timestamps();
         });

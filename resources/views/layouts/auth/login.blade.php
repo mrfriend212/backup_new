@@ -102,7 +102,13 @@
                             <span class="input-group-text bg-transparent border-end-0 text-white"><i class="bi bi-person"></i></span>
                             <input type="text" class="form-control border-start-0" name="username" placeholder="نام کاربری خود را وارد کنید" required dir="ltr">
                         </div>
+                        
                     </div>
+                    @error('message')
+                        <div>
+                            <strong>{{ $message }}</strong>
+                        </div>
+                    @enderror
                     <div class="mb-4">
                         <div class="d-flex justify-content-between align-items-center mb-1">
                             <label for="password" class="form-label small mb-0">رمز عبور</label>
