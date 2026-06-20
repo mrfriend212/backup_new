@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('backup_projects', function (Blueprint $table) {
+        Schema::create('backup_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('sftp_account_id')->constrained()->onDelete('cascade');
-            $table->string('project_name'); // مانند HIS
-            $table->enum('database_type', ['mysql', 'pgsql', 'sqlite', 'sqlsrv'])->default('sqlsrv');
+            $table->enum('status', ['success', 'failed']);
+            $table->timestamp('uploaded_at');
+            $table->string('file_name')->nullable();
+            $table->bigInteger('file_size')->nullable(); // به بایت
             $table->timestamps();
             $table->softDeletes();
         });
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('backup_projects');
+        Schema::dropIfExists('backup_logs');
     }
 };

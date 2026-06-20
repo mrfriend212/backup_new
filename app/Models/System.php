@@ -6,30 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 
-
-class User extends Authenticatable
+class System extends Model
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name',
-        'family',
-        'username',
-        'password',
-        'user_type',
-        'status',
-    ];
-
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    protected $casts = [
-        'password' => 'hashed',
+        'name_fa',
+        'name_en',
     ];
 
     // رابطه با sftp_accounts

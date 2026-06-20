@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('backup_schedules', function (Blueprint $table) {
+        Schema::create('systems', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->constrained('backup_projects')->onDelete('cascade');
-            $table->json('days_of_week'); // مثلاً [0,2] برای شنبه و دوشنبه
-            $table->boolean('is_active')->default(true);
+            $table->string('name_fa');
+            $table->string('name_en')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('backup_schedules');
+        Schema::dropIfExists('systems');
     }
 };

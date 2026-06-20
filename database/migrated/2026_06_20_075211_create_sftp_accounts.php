@@ -14,20 +14,21 @@ return new class extends Migration
         Schema::create('sftp_accounts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('account_name'); // مانند h_afshar
-            $table->string('host');
-            $table->integer('port')->default(32);
+            $table->foreignId('unit_id')->constrained()->onDelete('cascade');
+            $table->foreignId('system_id')->constrained()->onDelete('cascade');
+            $table->enum('database_type', ['mysql', 'pgsql', 'sqlite', 'sqlsrv'])->default('sqlsrv');
             $table->string('username');
             $table->text('password')->nullable(); // برای احراز هویت با پسورد
+            $table->string('host')->default('10.10.10.9');
+            $table->integer('port')->default(32);
+            $table->string('root_path')->nullable(); // مسیر پایه روی سرور
+            $table->json('days_of_week'); // مثلاً [0,2] برای شنبه و دوشنبه
             $table->text('private_key')->nullable(); // کلید خصوصی SSH
             $table->text('public_key')->nullable(); // کلید عمومی SSH
             $table->string('passphrase')->nullable(); // رمز عبور کلید خصوصی (در صورت وجود)
-            $table->string('root_path')->nullable(); // مسیر پایه روی سرور
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
-            
-            $table->unique(['user_id', 'account_name']);
         });
     }
 
