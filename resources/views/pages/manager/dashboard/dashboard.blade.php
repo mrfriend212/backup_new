@@ -123,83 +123,27 @@
 @endsection
 
 <div>
-    <div class="container-fluid">
-        <!-- عنوان صفحه -->
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h2">
-                <i class="bi bi-speedometer2"></i>
-                داشبورد
-            </h1>
-        </div>
+    <!-- عنوان صفحه -->
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">
+            <i class="bi bi-speedometer2"></i>
+            داشبورد
+        </h1>
+    </div>
 
-        <!-- کارت‌های آماری -->
-        <div class="row g-3 mb-4">
-            <div class="col-xl-3 col-md-6">
-                <div class="card card-stats bg-primary text-white shadow">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col">
-                                <h5 class="card-title text-white-50">تعداد کل بکاپ‌ها</h5>
-                                <span class="h2 font-weight-bold mb-0">{{ number_format($totalBackups) }}</span>
-                            </div>
-                            <div class="col-auto">
-                                <div class="icon-circle bg-white text-primary">
-                                    <i class="bi bi-database fs-1"></i>
-                                </div>
-                            </div>
+    <!-- کارت‌های آماری -->
+    <div class="row g-3 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card card-stats bg-primary text-white shadow">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title text-white-50">تعداد کل بکاپ‌ها</h5>
+                            <span class="h2 font-weight-bold mb-0">{{ number_format($totalBackups) }}</span>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6">
-                <div class="card card-stats bg-success text-white shadow">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col">
-                                <h5 class="card-title text-white-50">بکاپ‌های موفق</h5>
-                                <span class="h2 font-weight-bold mb-0">{{ number_format($successCount) }}</span>
-                            </div>
-                            <div class="col-auto">
-                                <div class="icon-circle bg-white text-success">
-                                    <i class="bi bi-check-circle fs-1"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6">
-                <div class="card card-stats bg-danger text-white shadow">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col">
-                                <h5 class="card-title text-white-50">بکاپ‌های ناموفق</h5>
-                                <span class="h2 font-weight-bold mb-0">{{ number_format($failedCount) }}</span>
-                            </div>
-                            <div class="col-auto">
-                                <div class="icon-circle bg-white text-danger">
-                                    <i class="bi bi-x-circle fs-1"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6">
-                <div class="card card-stats {{ $successRate >= 90 ? 'bg-info' : ($successRate >= 70 ? 'bg-warning' : 'bg-danger') }} text-white shadow">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col">
-                                <h5 class="card-title text-white-50">درصد موفقیت</h5>
-                                <span class="h2 font-weight-bold mb-0">{{ $successRate }}%</span>
-                            </div>
-                            <div class="col-auto">
-                                <div class="icon-circle bg-white text-info">
-                                    <i class="bi bi-graph-up-arrow fs-1"></i>
-                                </div>
+                        <div class="col-auto">
+                            <div class="icon-circle bg-white text-primary">
+                                <i class="bi bi-database fs-1"></i>
                             </div>
                         </div>
                     </div>
@@ -207,177 +151,231 @@
             </div>
         </div>
 
-        <!-- گراف هفتگی و آمار واحدها -->
-        <div class="row g-3 mb-4">
-            <div class="col-xl-7">
-                <div class="card shadow">
-                    <div class="card-header bg-white">
-                        <h5 class="card-title mb-0">
-                            <i class="bi bi-bar-chart"></i>
-                            آمار هفتگی بکاپ‌ها
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div style="height: 250px;">
-                            <canvas id="weeklyChart"></canvas>
+        <div class="col-xl-3 col-md-6">
+            <div class="card card-stats bg-success text-white shadow">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title text-white-50">بکاپ‌های موفق</h5>
+                            <span class="h2 font-weight-bold mb-0">{{ number_format($successCount) }}</span>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon-circle bg-white text-success">
+                                <i class="bi bi-check-circle fs-1"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="col-xl-5">
-                <div class="card shadow">
-                    <div class="card-header bg-white">
-                        <h5 class="card-title mb-0">
-                            <i class="bi bi-building"></i>
-                            آمار بر اساس واحد
-                        </h5>
+        <div class="col-xl-3 col-md-6">
+            <div class="card card-stats bg-danger text-white shadow">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title text-white-50">بکاپ‌های ناموفق</h5>
+                            <span class="h2 font-weight-bold mb-0">{{ number_format($failedCount) }}</span>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon-circle bg-white text-danger">
+                                <i class="bi bi-x-circle fs-1"></i>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
-                            <table class="table table-sm table-hover mb-0">
-                                <thead class="table-light sticky-top">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card card-stats {{ $successRate >= 90 ? 'bg-info' : ($successRate >= 70 ? 'bg-warning' : 'bg-danger') }} text-white shadow">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title text-white-50">درصد موفقیت</h5>
+                            <span class="h2 font-weight-bold mb-0">{{ $successRate }}%</span>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon-circle bg-white text-info">
+                                <i class="bi bi-graph-up-arrow fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- گراف هفتگی و آمار واحدها -->
+    <div class="row g-3 mb-4">
+        <div class="col-xl-7">
+            <div class="card shadow">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-bar-chart"></i>
+                        آمار هفتگی بکاپ‌ها
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div style="height: 250px;">
+                        <canvas id="weeklyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-5">
+            <div class="card shadow">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-building"></i>
+                        آمار بر اساس واحد
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead class="table-light sticky-top">
+                                <tr>
+                                    <th>واحد</th>
+                                    <th class="text-center">موفق</th>
+                                    <th class="text-center">ناموفق</th>
+                                    <th class="text-center">درصد</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($unitStats as $stat)
                                     <tr>
-                                        <th>واحد</th>
-                                        <th class="text-center">موفق</th>
-                                        <th class="text-center">ناموفق</th>
-                                        <th class="text-center">درصد</th>
+                                        <td>{{ $stat['unit_name'] }}</td>
+                                        <td class="text-center text-success">{{ $stat['success'] }}</td>
+                                        <td class="text-center text-danger">{{ $stat['failed'] }}</td>
+                                        <td class="text-center">
+                                            <span class="badge bg-{{ $stat['color'] }}">
+                                                {{ $stat['success_rate'] }}%
+                                            </span>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse($unitStats as $stat)
-                                        <tr>
-                                            <td>{{ $stat['unit_name'] }}</td>
-                                            <td class="text-center text-success">{{ $stat['success'] }}</td>
-                                            <td class="text-center text-danger">{{ $stat['failed'] }}</td>
-                                            <td class="text-center">
-                                                <span class="badge bg-{{ $stat['color'] }}">
-                                                    {{ $stat['success_rate'] }}%
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="4" class="text-center">داده‌ای موجود نیست</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="text-center">داده‌ای موجود نیست</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- فیلترها و جدول -->
-        <div class="card shadow">
-            <div class="card-header bg-white">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-list-ul"></i>
-                    لیست بکاپ‌ها
-                </h5>
+    <!-- فیلترها و جدول -->
+    <div class="card shadow">
+        <div class="card-header bg-white">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-list-ul"></i>
+                لیست بکاپ‌ها
+            </h5>
+        </div>
+        <div class="card-body">
+            <!-- فیلترها -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-3">
+                    <label class="form-label">واحد</label>
+                    <select class="form-select" wire:model.live="unit_id">
+                        <option value="">همه واحدها</option>
+                        @foreach($units as $unit)
+                            <option value="{{ $unit->id }}">{{ $unit->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">وضعیت</label>
+                    <select class="form-select" wire:model.live="status">
+                        <option value="">همه</option>
+                        <option value="success">موفق</option>
+                        <option value="failed">ناموفق</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">از تاریخ</label>
+                    <input type="text" class="form-control" wire:model.live="date_from" placeholder="1404/01/01">
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">تا تاریخ</label>
+                    <input type="text" class="form-control" wire:model.live="date_to" placeholder="1404/12/29">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">جستجو</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" wire:model.live="search" placeholder="نام واحد یا فایل...">
+                        <button class="btn btn-outline-secondary" type="button" wire:click="resetFilters">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <!-- فیلترها -->
-                <div class="row g-3 mb-3">
-                    <div class="col-md-3">
-                        <label class="form-label">واحد</label>
-                        <select class="form-select" wire:model.live="unit_id">
-                            <option value="">همه واحدها</option>
-                            @foreach($units as $unit)
-                                <option value="{{ $unit->id }}">{{ $unit->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
 
-                    <div class="col-md-2">
-                        <label class="form-label">وضعیت</label>
-                        <select class="form-select" wire:model.live="status">
-                            <option value="">همه</option>
-                            <option value="success">موفق</option>
-                            <option value="failed">ناموفق</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-2">
-                        <label class="form-label">از تاریخ</label>
-                        <input type="text" class="form-control" wire:model.live="date_from" placeholder="1404/01/01">
-                    </div>
-
-                    <div class="col-md-2">
-                        <label class="form-label">تا تاریخ</label>
-                        <input type="text" class="form-control" wire:model.live="date_to" placeholder="1404/12/29">
-                    </div>
-
-                    <div class="col-md-3">
-                        <label class="form-label">جستجو</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" wire:model.live="search" placeholder="نام واحد یا فایل...">
-                            <button class="btn btn-outline-secondary" type="button" wire:click="resetFilters">
-                                <i class="bi bi-x-circle"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- جدول -->
-                <div class="table-responsive">
-                    <table class="table table-hover table-striped">
-                        <thead class="table-dark">
+            <!-- جدول -->
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>واحد</th>
+                            <th>سیستم</th>
+                            <th>تاریخ</th>
+                            <th>وضعیت</th>
+                            <th>نام فایل</th>
+                            <th>حجم</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($backups as $backup)
                             <tr>
-                                <th>#</th>
-                                <th>واحد</th>
-                                <th>سیستم</th>
-                                <th>تاریخ</th>
-                                <th>وضعیت</th>
-                                <th>نام فایل</th>
-                                <th>حجم</th>
+                                <td>{{ $backups->firstItem() + $loop->index }}</td>
+                                <td>{{ $backup->sftpAccount?->unit?->name ?? 'نامشخص' }}</td>
+                                <td>{{ $backup->sftpAccount?->system?->name_fa ?? 'نامشخص' }}</td>
+                                <td>{{ \Morilog\Jalali\Jalalian::fromCarbon($backup->uploaded_at)->format('Y/m/d H:i') }}</td>
+                                <td>
+                                    @if($backup->status == 'success')
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle"></i>
+                                            موفق
+                                        </span>
+                                    @else
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-x-circle"></i>
+                                            ناموفق
+                                        </span>
+                                    @endif
+                                </td>
+                                <td>{{ $backup->file_name ?? '---' }}</td>
+                                <td>{{ $backup->file_size ? number_format($backup->file_size / 1024, 2) . ' KB' : '---' }}</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($backups as $backup)
-                                <tr>
-                                    <td>{{ $backups->firstItem() + $loop->index }}</td>
-                                    <td>{{ $backup->sftpAccount?->unit?->name ?? 'نامشخص' }}</td>
-                                    <td>{{ $backup->sftpAccount?->system?->name_fa ?? 'نامشخص' }}</td>
-                                    <td>{{ \Morilog\Jalali\Jalalian::fromCarbon($backup->uploaded_at)->format('Y/m/d H:i') }}</td>
-                                    <td>
-                                        @if($backup->status == 'success')
-                                            <span class="badge bg-success">
-                                                <i class="bi bi-check-circle"></i>
-                                                موفق
-                                            </span>
-                                        @else
-                                            <span class="badge bg-danger">
-                                                <i class="bi bi-x-circle"></i>
-                                                ناموفق
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td>{{ $backup->file_name ?? '---' }}</td>
-                                    <td>{{ $backup->file_size ? number_format($backup->file_size / 1024, 2) . ' KB' : '---' }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="7" class="text-center py-4">
-                                        <i class="bi bi-inbox fs-2 d-block"></i>
-                                        <span class="text-muted">هیچ رکوردی یافت نشد</span>
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center py-4">
+                                    <i class="bi bi-inbox fs-2 d-block"></i>
+                                    <span class="text-muted">هیچ رکوردی یافت نشد</span>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
 
-                <!-- Pagination -->
-                <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 gap-2">
-                    <div class="text-muted small">
-                        <i class="bi bi-info-circle"></i>
-                        نمایش {{ $backups->firstItem() ?? 0 }} تا {{ $backups->lastItem() ?? 0 }} از {{ $backups->total() }} رکورد
-                    </div>
-                    <div class="d-flex justify-content-center">
-                        {{ $backups->links() }}
-                    </div>
+            <!-- Pagination -->
+            <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 gap-2">
+                <div class="text-muted small">
+                    <i class="bi bi-info-circle"></i>
+                    نمایش {{ $backups->firstItem() ?? 0 }} تا {{ $backups->lastItem() ?? 0 }} از {{ $backups->total() }} رکورد
+                </div>
+                <div class="d-flex justify-content-center">
+                    {{ $backups->links() }}
                 </div>
             </div>
         </div>
