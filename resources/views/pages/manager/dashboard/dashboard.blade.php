@@ -123,14 +123,6 @@
 @endsection
 
 <div>
-    <!-- عنوان صفحه -->
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">
-            <i class="bi bi-speedometer2"></i>
-            داشبورد
-        </h1>
-    </div>
-
     <!-- کارت‌های آماری -->
     <div class="row g-3 mb-4">
         <div class="col-xl-3 col-md-6">
