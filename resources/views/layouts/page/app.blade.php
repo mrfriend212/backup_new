@@ -10,20 +10,22 @@
         @include('layouts.page.partial.nav')
 
         <!-- Content Title -->
-        <h4 class="fw-bold mb-4">
-            @hasSection('title')
+         @hasSection('title')
+            <h4 class="fw-bold mb-4">  
                 @yield('title')
-            @else
-                {{ $title ?? 'عنوان صفحه' }}
-            @endif
-        </h4>
-
-        <!-- Content Body -->
-        @hasSection('content')
-            @yield('content')
-        @else
-            {{ $slot }}
+            </h4>
         @endif
+
+        <main class="flex-grow-1" style="overflow-y: auto; height: calc(100vh - 56px);">
+            <div class="container-fluid py-3">
+                <!-- Content Body -->
+                @hasSection('content')
+                    @yield('content')
+                @else
+                    {{ $slot }}
+                @endif
+            </div>
+        </main>
     </div>
 
     @include('layouts.page.partial.script')
