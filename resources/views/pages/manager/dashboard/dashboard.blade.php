@@ -80,12 +80,12 @@
 
                 <div class="col-md-2">
                     <label class="form-label">از تاریخ</label>
-                    <input type="text" class="form-control" wire:model.live="date_from" placeholder="1404/01/01">
+                    <input type="text" class="form-control" wire:model.live="date_from" placeholder="1403/08/12">
                 </div>
 
                 <div class="col-md-2">
                     <label class="form-label">تا تاریخ</label>
-                    <input type="text" class="form-control" wire:model.live="date_to" placeholder="1404/12/29">
+                    <input type="text" class="form-control" wire:model.live="date_to" placeholder="1405/12/29">
                 </div>
 
                 <div class="col-md-2">
@@ -339,20 +339,13 @@
     function renderChart() {
         const weeklyStats = @json($weeklyStats);
         
-        console.log('📊 داده‌های آماری:', weeklyStats);
-        
         if (!weeklyStats || weeklyStats.length === 0) {
-            console.log('⚠️ داده‌ای برای نمایش وجود ندارد');
             return;
         }
 
         const labels = weeklyStats.map(item => item.date);
         const successData = weeklyStats.map(item => item.success);
         const failedData = weeklyStats.map(item => item.failed);
-        
-        console.log('📌 برچسب‌ها:', labels);
-        console.log('🟢 موفق:', successData);
-        console.log('🔴 ناموفق:', failedData);
 
         const options = {
             series: [
@@ -484,12 +477,11 @@
                     categories: labels
                 }
             });
-            console.log('✅ چارت به‌روزرسانی شد');
+
         } else {
             // ایجاد چارت جدید
             chartInstance = new ApexCharts(container, options);
             chartInstance.render();
-            console.log('✅ چارت جدید ساخته شد');
         }
     }
 
@@ -497,16 +489,13 @@
     function renderChartWithRetry(attempts = 0) {
         const maxAttempts = 10;
         if (attempts > maxAttempts) {
-            console.log('❌ حداکثر تلاش برای رندر چارت رد شد');
             return;
         }
         
         const container = document.getElementById('weeklyChart');
         if (container) {
-            console.log(`✅ عنصر چارت پیدا شد (تلاش ${attempts + 1})`);
             renderChart();
         } else {
-            console.log(`⏳ انتظار برای بارگذاری عنصر... (تلاش ${attempts + 1})`);
             setTimeout(() => {
                 renderChartWithRetry(attempts + 1);
             }, 300);
@@ -515,22 +504,18 @@
 
     // اجرا در زمان‌های مختلف
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('🔄 DOMContentLoaded');
         setTimeout(renderChartWithRetry, 500);
     });
 
     document.addEventListener('livewire:init', function() {
-        console.log('🔄 livewire:init');
         setTimeout(renderChartWithRetry, 500);
     });
 
     document.addEventListener('livewire:update', function() {
-        console.log('🔄 livewire:update - به‌روزرسانی چارت');
         setTimeout(renderChartWithRetry, 300);
     });
 
     window.addEventListener('load', function() {
-        console.log('🔄 load');
         setTimeout(renderChartWithRetry, 300);
     });
 </script>
