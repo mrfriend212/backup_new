@@ -66,12 +66,12 @@
 
                 <div class="col-md-2">
                     <label class="form-label">از تاریخ</label>
-                    <input type="text" class="form-control" wire:model.live="date_from" placeholder="1404/01/01">
+                    <input type="text" class="form-control" wire:model.live="date_from" placeholder="1403/08/12">
                 </div>
 
                 <div class="col-md-2">
                     <label class="form-label">تا تاریخ</label>
-                    <input type="text" class="form-control" wire:model.live="date_to" placeholder="1404/12/29">
+                    <input type="text" class="form-control" wire:model.live="date_to" placeholder="1405/12/29">
                 </div>
 
                 <div class="col-md-3">
