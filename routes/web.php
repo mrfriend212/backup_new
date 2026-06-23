@@ -31,4 +31,5 @@ Route::middleware(['auth','not_direct_access_to_page'])->prefix('panel/manager')
 /********  User Routes  *********/
 Route::middleware(['auth','not_direct_access_to_page'])->prefix('panel/user')->name('panel.user.')->group(function () {
     Route::livewire('/dahboard', 'pages::user.dashboard')->name('dashboard');
+    Route::livewire('/account', 'pages::user.account')->name('account');
 });
