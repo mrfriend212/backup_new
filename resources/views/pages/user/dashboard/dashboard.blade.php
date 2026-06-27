@@ -204,7 +204,7 @@
                                         {{ $backup->sftpAccount?->username ?? '---' }}
                                     </span>
                                 </td>
-                                <td>{{ \Morilog\Jalali\Jalalian::fromCarbon($backup->uploaded_at)->format('Y/m/d H:i') }}</td>
+                                <td>{{ \Morilog\Jalali\Jalalian::fromCarbon($backup->uploaded_at)->format('Y/m/d') }}</td>
                                 <td>
                                     @if($backup->status == 'success')
                                         <span class="badge bg-success">

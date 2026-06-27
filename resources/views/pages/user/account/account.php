@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 
 new class extends Component
 {
-    public $accounts = [];
+     public $accounts = [];
 
     public function mount()
     {
@@ -41,7 +41,6 @@ new class extends Component
             6 => 'شنبه',
         ];
 
-        // اگر JSON است، آن را دیکد کن
         if (is_string($daysArray)) {
             $daysArray = json_decode($daysArray, true);
         }
@@ -91,6 +90,40 @@ new class extends Component
         $label = $labels[$type] ?? $type;
 
         return '<span class="badge bg-' . $color . '">' . $label . '</span>';
+    }
+
+    /**
+     * ⭐ دانلود کلید خصوصی
+     */
+    public function downloadPrivateKey($accountId)
+    {
+        $account = SftpAccount::where('user_id', Auth::id())
+            ->where('id', $accountId)
+            ->first();
+
+        if (!$account) {
+            session()->flash('error', 'اکانت مورد نظر یافت نشد');
+            return;
+        }
+
+        if (empty($account->private_key)) {
+            session()->flash('error', 'کلید خصوصی برای این اکانت وجود ندارد');
+            return;
+        }
+
+        // نام فایل
+        $filename = 'private_key_' . $account->username . '_' . now()->format('Ymd_His') . '.ppk';
+        
+        // محتوای کلید
+        $content = $account->private_key;
+
+        // دانلود فایل
+        return response()->streamDownload(function() use ($content) {
+            echo $content;
+        }, $filename, [
+            'Content-Type' => 'application/x-putty',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
     }
 
     public function render()

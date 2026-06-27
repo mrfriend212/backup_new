@@ -38,12 +38,6 @@
     .border-danger {
         border-top-color: #dc3545 !important;
     }
-    .border-warning {
-        border-top-color: #ffc107 !important;
-    }
-    .border-info {
-        border-top-color: #0dcaf0 !important;
-    }
     code {
         background-color: #f8f9fa;
         padding: 2px 8px;
@@ -117,10 +111,12 @@
                                 {!! $this->getStatusBadge($account->is_active) !!}
                             </div>
                         </div>
+                        
                         <div class="card-body">
                             <div class="row g-3">
-                                <!-- نام واحد -->
+                                <!-- ستون اول -->
                                 <div class="col-md-6">
+                                    <!-- واحد -->
                                     <div class="info-item">
                                         <label class="text-muted small d-block">واحد</label>
                                         <div class="fw-bold">
@@ -128,10 +124,8 @@
                                             {{ $account->unit->name ?? 'نامشخص' }}
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- سیستم -->
-                                <div class="col-md-6">
+                                    <!-- سیستم -->
                                     <div class="info-item">
                                         <label class="text-muted small d-block">سیستم / نرم‌افزار</label>
                                         <div class="fw-bold">
@@ -142,10 +136,8 @@
                                             @endif
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- نام کاربری -->
-                                <div class="col-md-6">
+                                    <!-- نام کاربری -->
                                     <div class="info-item">
                                         <label class="text-muted small d-block">نام کاربری</label>
                                         <div class="fw-bold">
@@ -153,10 +145,8 @@
                                             <code>{{ $account->username }}</code>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- پسورد -->
-                                <div class="col-md-6">
+                                    <!-- پسورد -->
                                     <div class="info-item">
                                         <label class="text-muted small d-block">پسورد</label>
                                         <div class="fw-bold">
@@ -175,32 +165,49 @@
                                             @endif
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- هاست و پورت -->
-                                <div class="col-md-6">
+                                    <!-- ⭐ Passphrase -->
                                     <div class="info-item">
-                                        <label class="text-muted small d-block">هاست</label>
+                                        <label class="text-muted small d-block">پسورد کلید خصوصی</label>
                                         <div class="fw-bold">
-                                            <i class="bi bi-server text-secondary"></i>
-                                            <span class="text-muted small">{{ $account->port ?? 32 }}:</span>
-                                            <span>{{ $account->host ?? '10.10.10.9' }}</span>
+                                            <i class="bi bi-shield-lock text-warning"></i>
+                                            @if($account->passphrase)
+                                                <span class="password-mask" id="passphrase-{{ $account->id }}">
+                                                    ••••••••
+                                                </span>
+                                                <button class="btn btn-sm btn-outline-secondary ms-2 toggle-password" 
+                                                        data-target="passphrase-{{ $account->id }}"
+                                                        data-password="{{ $account->passphrase }}">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            @else
+                                                <span class="text-muted">---</span>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- نوع دیتابیس -->
+                                <!-- ستون دوم -->
                                 <div class="col-md-6">
+                                    <!-- هاست -->
+                                    <div class="info-item">
+                                        <label class="text-muted small d-block">هاست</label>
+                                        <div class="fw-bold">
+                                            <i class="bi bi-server text-secondary"></i>
+                                            {{ $account->host ?? '10.10.10.9' }}
+                                            <span class="text-muted small">:{{ $account->port ?? 32 }}</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- نوع دیتابیس -->
                                     <div class="info-item">
                                         <label class="text-muted small d-block">نوع دیتابیس</label>
                                         <div class="fw-bold">
                                             {!! $this->getDatabaseBadge($account->database_type) !!}
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- روزهای بکاپ -->
-                                <div class="col-12">
+                                    <!-- روزهای بکاپ -->
                                     <div class="info-item">
                                         <label class="text-muted small d-block">روزهای بکاپ‌گیری</label>
                                         <div class="fw-bold">
@@ -227,7 +234,7 @@
                                                 }
                                             @endphp
                                             @if(!empty($persianDays))
-                                                <span class="badge bg-danger me-1" style="font-size: 0.9rem;">
+                                                <span class="badge bg-danger me-1" style="font-size: 0.85rem;">
                                                     {{ implode(' | ', $persianDays) }}
                                                 </span>
                                             @else
@@ -237,20 +244,7 @@
                                     </div>
                                 </div>
 
-                                <!-- مسیر ریشه -->
-                                @if($account->root_path)
-                                    <div class="col-12">
-                                        <div class="info-item">
-                                            <label class="text-muted small d-block">مسیر ریشه</label>
-                                            <div class="fw-bold">
-                                                <i class="bi bi-folder text-warning"></i>
-                                                <code>{{ $account->root_path }}</code>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
-
-                                <!-- اطلاعات ایجاد -->
+                                <!-- تاریخ‌ها (تمام عرض) -->
                                 <div class="col-12">
                                     <hr class="my-2">
                                     <div class="d-flex justify-content-between text-muted small">
@@ -265,6 +259,31 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        
+                        <!-- ⭐ دکمه دانلود کلید خصوصی -->
+                        <div class="card-footer bg-white">
+                            @if(!empty($account->private_key))
+                                <button type="button" 
+                                        class="btn btn-sm btn-outline-success w-100"
+                                        wire:click="downloadPrivateKey({{ $account->id }})"
+                                        wire:loading.attr="disabled"
+                                        wire:target="downloadPrivateKey({{ $account->id }})">
+                                    <span wire:loading.remove wire:target="downloadPrivateKey({{ $account->id }})">
+                                        <i class="bi bi-download"></i>
+                                        دانلود کلید خصوصی
+                                    </span>
+                                    <span wire:loading wire:target="downloadPrivateKey({{ $account->id }})">
+                                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                        در حال دانلود...
+                                    </span>
+                                </button>
+                            @else
+                                <div class="text-center text-muted small">
+                                    <i class="bi bi-info-circle"></i>
+                                    کلید خصوصی برای این اکانت ثبت نشده است
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
