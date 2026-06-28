@@ -24,6 +24,10 @@
         font-size: 0.7rem;
         margin-right: 4px;
     }
+    /* استایل مودال */
+    .modal-header .btn-close-white {
+        filter: brightness(0) invert(1);
+    }
 </style>
 @endsection
 
@@ -420,9 +424,11 @@
                             <span class="badge bg-primary">{{ $system->sftp_accounts_count }}</span>
                         </td>
                         <td class="text-center">
-                            <a href="#" class="btn btn-sm btn-outline-primary" title="در حال توسعه">
+                            <button class="btn btn-sm btn-outline-primary" 
+                                    wire:click="editSystem({{ $system->id }})"
+                                    title="ویرایش نرم‌افزار">
                                 <i class="bi bi-pencil"></i>
-                            </a>
+                            </button>
                         </td>
                     </tr>
                 @empty
@@ -438,6 +444,66 @@
         {{ $systems->links() }}
     </div>
             @endif
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- مودال ویرایش نرم‌افزار -->
+    <!-- ============================================ -->
+    <div class="modal fade" id="editSystemModal" tabindex="-1" aria-hidden="true" wire:ignore.self>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-pencil-square"></i>
+                        ویرایش نرم‌افزار
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @if(session()->has('message'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('message') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    <form wire:submit.prevent="updateSystem">
+                        <div class="mb-3">
+                            <label class="form-label">نام فارسی <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control @error('editSystemNameFa') is-invalid @enderror" 
+                                wire:model="editSystemNameFa" placeholder="مثلاً: سیستم مدیریت بیمارستان">
+                            @error('editSystemNameFa')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">نام انگلیسی</label>
+                            <input type="text" class="form-control @error('editSystemNameEn') is-invalid @enderror" 
+                                wire:model="editSystemNameEn" placeholder="مثلاً: HIS">
+                            @error('editSystemNameEn')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" wire:click="cancelEdit">
+                                <i class="bi bi-x-circle"></i> انصراف
+                            </button>
+                            <button type="submit" class="btn btn-primary" wire:loading.attr="disabled">
+                                <span wire:loading.remove>
+                                    <i class="bi bi-check-circle"></i> ذخیره تغییرات
+                                </span>
+                                <span wire:loading>
+                                    <span class="spinner-border spinner-border-sm" role="status"></span>
+                                    در حال ذخیره...
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -507,6 +573,26 @@
     document.addEventListener('livewire:update', function() {
         setTimeout(renderWeeklyChart, 300);
         setTimeout(renderUserRoleChart, 300);
+    });
+
+    // ===== مدیریت مودال =====
+    window.addEventListener('show-edit-modal', event => {
+        const modal = new bootstrap.Modal(document.getElementById('editSystemModal'));
+        modal.show();
+    });
+
+    window.addEventListener('hide-edit-modal', event => {
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editSystemModal'));
+        if (modal) {
+            modal.hide();
+        }
+    });
+
+    // وقتی مودال بسته میشه، فرم رو ریست کن
+    document.addEventListener('hidden.bs.modal', function (event) {
+        if (event.target.id === 'editSystemModal') {
+            @this.cancelEdit();
+        }
     });
 </script>
 @endsection

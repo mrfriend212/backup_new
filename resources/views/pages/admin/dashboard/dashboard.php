@@ -39,6 +39,11 @@ new class extends Component
     public $userRoleStats = [];
     public $systemUsageStats = [];
 
+    // ===== متدهای مدیریت نرم‌افزارها =====
+    public $editingSystem = null;
+    public $editSystemNameFa = '';
+    public $editSystemNameEn = '';
+
     protected $queryString = [
         'search' => ['except' => ''],
         'role_filter' => ['except' => ''],
@@ -258,6 +263,43 @@ new class extends Component
             $this->loadStatistics();
             session()->flash('message', 'وضعیت اکانت با موفقیت تغییر کرد');
         }
+    }
+
+    public function editSystem($systemId)
+    {
+        $system = System::find($systemId);
+        if ($system) {
+            $this->editingSystem = $systemId;
+            $this->editSystemNameFa = $system->name_fa;
+            $this->editSystemNameEn = $system->name_en ?? '';
+            $this->dispatch('show-edit-modal');
+        }
+    }
+
+    public function updateSystem()
+    {
+        $this->validate([
+            'editSystemNameFa' => 'required|min:2|max:255',
+            'editSystemNameEn' => 'nullable|max:100',
+        ]);
+
+        $system = System::find($this->editingSystem);
+        if ($system) {
+            $system->name_fa = $this->editSystemNameFa;
+            $system->name_en = $this->editSystemNameEn;
+            $system->save();
+
+            $this->reset(['editingSystem', 'editSystemNameFa', 'editSystemNameEn']);
+            $this->loadStatistics();
+            $this->dispatch('hide-edit-modal');
+            session()->flash('message', 'نرم‌افزار با موفقیت ویرایش شد');
+        }
+    }
+
+    public function cancelEdit()
+    {
+        $this->reset(['editingSystem', 'editSystemNameFa', 'editSystemNameEn']);
+        $this->dispatch('hide-edit-modal');
     }
 
     public function render()
