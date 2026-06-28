@@ -139,7 +139,7 @@
 
                                     <!-- نام کاربری -->
                                     <div class="info-item">
-                                        <label class="text-muted small d-block">نام کاربری</label>
+                                        <label class="text-muted small d-block">نام کاربری (Username)</label>
                                         <div class="fw-bold">
                                             <i class="bi bi-person text-success"></i>
                                             <code>{{ $account->username }}</code>
@@ -148,7 +148,7 @@
 
                                     <!-- پسورد -->
                                     <div class="info-item">
-                                        <label class="text-muted small d-block">پسورد</label>
+                                        <label class="text-muted small d-block">پسورد (Password)</label>
                                         <div class="fw-bold">
                                             <i class="bi bi-key text-warning"></i>
                                             @if($account->password)
@@ -168,7 +168,7 @@
 
                                     <!-- ⭐ Passphrase -->
                                     <div class="info-item">
-                                        <label class="text-muted small d-block">پسورد کلید خصوصی</label>
+                                        <label class="text-muted small d-block">پسورد کلید خصوصی (Passphrase)</label>
                                         <div class="fw-bold">
                                             <i class="bi bi-shield-lock text-warning"></i>
                                             @if($account->passphrase)
@@ -194,8 +194,8 @@
                                         <label class="text-muted small d-block">هاست</label>
                                         <div class="fw-bold">
                                             <i class="bi bi-server text-secondary"></i>
+                                            <span class="text-muted small">{{ $account->port ?? 32 }}:</span>
                                             {{ $account->host ?? '10.10.10.9' }}
-                                            <span class="text-muted small">:{{ $account->port ?? 32 }}</span>
                                         </div>
                                     </div>
 
