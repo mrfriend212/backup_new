@@ -619,6 +619,7 @@
             </div>
         </div>
     </div>
+
 </div>
 
 @section('script')
@@ -717,6 +718,82 @@ observer.observe(document.body, {
     subtree: true,
     attributes: true,
     attributeFilter: ['class']
+});
+
+// ============================================
+// نمایش نوتیفیکیشن با Livewire.on (مستقل از Alpine.js)
+// ============================================
+document.addEventListener('DOMContentLoaded', function() {
+    
+    Livewire.on('notify', (data) => {
+        
+        // استخراج پیام و نوع
+        const message = data[0]?.message || data.message || 'پیام';
+        const type = data[0]?.type || data.type || 'success';
+        
+        // ایجاد المان نوتیفیکیشن
+        const notification = document.createElement('div');
+        notification.id = 'livewire-notification';
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999999;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            padding: 12px 20px;
+            border: none;
+            background-color: ${type === 'success' ? '#d4edda' : '#f8d7da'};
+            border-right: 5px solid ${type === 'success' ? '#28a745' : '#dc3545'};
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateX(-50%) translateY(-20px);
+        `;
+        
+        notification.innerHTML = `
+            <div class="d-flex align-items-center">
+                <i class="bi ${type === 'success' ? 'bi-check-circle-fill text-success' : 'bi-exclamation-triangle-fill text-danger'}" 
+                   style="font-size: 1.5rem; margin-left: 10px;"></i>
+                <div class="flex-grow-1" style="font-size: 0.95rem; color: ${type === 'success' ? '#155724' : '#721c24'};">
+                    ${message}
+                </div>
+                <button type="button" class="btn-close" 
+                        onclick="this.closest('#livewire-notification').remove()"
+                        style="font-size: 0.8rem;"></button>
+            </div>
+        `;
+        
+        // حذف نوتیفیکیشن قبلی (اگر وجود داشت)
+        const oldNotification = document.getElementById('livewire-notification');
+        if (oldNotification) {
+            oldNotification.remove();
+        }
+        
+        // اضافه کردن به صفحه
+        document.body.prepend(notification);
+        
+        // نمایش با انیمیشن
+        setTimeout(() => {
+            notification.style.opacity = '1';
+            notification.style.transform = 'translateX(-50%) translateY(0)';
+        }, 50);
+        
+        // حذف خودکار بعد از 5 ثانیه
+        setTimeout(() => {
+            if (notification && notification.parentNode) {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(-50%) translateY(-20px)';
+                setTimeout(() => {
+                    if (notification && notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 300);
+            }
+        }, 5000);
+    });
 });
 </script>
 @endsection
