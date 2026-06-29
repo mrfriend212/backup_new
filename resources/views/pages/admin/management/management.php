@@ -56,6 +56,91 @@ new class extends Component
     public $accountPassphrase = '';
     public $isEditingAccount = false;
 
+    // ===== متغیرهای مربوط به حذف =====
+    public $deleteModalType = '';
+    public $deleteModalId = null;
+    public $deleteModalTitle = '';
+    public $deleteModalMessage = '';
+    public $showDeleteModal = false;
+
+    public function confirmDelete($type, $id, $title = '')
+    {
+        $this->deleteModalType = $type;
+        $this->deleteModalId = $id;
+        $this->deleteModalTitle = $title;
+        
+        $messages = [
+            'user' => 'آیا از حذف این کاربر مطمئن هستید؟ تمام اکانت‌های مرتبط نیز حذف خواهند شد.',
+            'unit' => 'آیا از حذف این واحد مطمئن هستید؟ تمام اکانت‌های مرتبط نیز حذف خواهند شد.',
+            'system' => 'آیا از حذف این نرم‌افزار مطمئن هستید؟ تمام اکانت‌های مرتبط نیز حذف خواهند شد.',
+            'account' => 'آیا از حذف این اکانت SFTP مطمئن هستید؟',
+        ];
+        
+        $this->deleteModalMessage = $messages[$type] ?? 'آیا از حذف این آیتم مطمئن هستید؟';
+        
+        // ارسال رویداد برای نمایش مودال
+        $this->dispatch('show-delete-modal');
+    }
+
+    public function performDelete()
+    {
+        try {
+            $type = $this->deleteModalType;
+            $id = $this->deleteModalId;
+            $message = '';
+
+            switch ($type) {
+                case 'user':
+                    $user = User::find($id);
+                    if ($user && $user->id !== auth()->id()) {
+                        $user->delete();
+                        $message = 'کاربر با موفقیت حذف شد';
+                    } else {
+                        $message = 'نمی‌توانید خودتان را حذف کنید';
+                        $this->dispatch('notify', ['message' => $message, 'type' => 'error']);
+                        $this->reset(['deleteModalType', 'deleteModalId', 'deleteModalTitle', 'deleteModalMessage']);
+                        $this->dispatch('hide-delete-modal');
+                        return;
+                    }
+                    break;
+                case 'unit':
+                    $unit = Unit::find($id);
+                    if ($unit) {
+                        $unit->delete();
+                        $message = 'واحد با موفقیت حذف شد';
+                    }
+                    break;
+                case 'system':
+                    $system = System::find($id);
+                    if ($system) {
+                        $system->delete();
+                        $message = 'نرم‌افزار با موفقیت حذف شد';
+                    }
+                    break;
+                case 'account':
+                    $account = SftpAccount::find($id);
+                    if ($account) {
+                        $account->delete();
+                        $message = 'اکانت SFTP با موفقیت حذف شد';
+                    }
+                    break;
+            }
+
+            $this->reset(['deleteModalType', 'deleteModalId', 'deleteModalTitle', 'deleteModalMessage']);
+            $this->dispatch('hide-delete-modal');
+            $this->dispatch('notify', ['message' => $message, 'type' => 'success']);
+            
+        } catch (\Exception $e) {
+            $this->dispatch('notify', ['message' => 'خطا: ' . $e->getMessage(), 'type' => 'error']);
+        }
+    }
+
+    public function cancelDelete()
+    {
+        $this->reset(['deleteModalType', 'deleteModalId', 'deleteModalTitle', 'deleteModalMessage']);
+        $this->dispatch('hide-delete-modal');
+    }
+
     // ===== روزهای هفته =====
     public $weekDays = [
         ['value' => 0, 'label' => 'یکشنبه'],
@@ -113,7 +198,7 @@ new class extends Component
                 'accountUnitId' => 'required|exists:units,id',
                 'accountSystemId' => 'required|exists:systems,id',
                 'accountUsername' => 'required|string|max:100|unique:sftp_accounts,username,' . ($this->accountId ?? 'NULL'),
-                'accountPassword' => 'nullable|string|max:255',
+                'accountPassword' => 'nullable|string|max:255',  // ✅ nullable شده
                 'accountHost' => 'required|string|max:255',
                 'accountPort' => 'required|integer|min:1|max:65535',
                 'accountRootPath' => 'nullable|string|max:500',
@@ -122,9 +207,7 @@ new class extends Component
                 'accountIsActive' => 'boolean',
                 'accountPassphrase' => 'nullable|string|max:255',
             ];
-            if (!$this->isEditingAccount) {
-                $rules['accountPassword'] = 'required|string|max:255';
-            }
+            // شرط اجباری بودن رمز برای ایجاد جدید حذف شد
         }
 
         return $rules;

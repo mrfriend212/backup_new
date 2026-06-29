@@ -1,5 +1,12 @@
 @section('css')
+<!-- TomSelect CSS -->
+<link href="{{asset('assets/lib/tom-select/tom-select.bootstrap5.min.css')}}" rel="stylesheet">
 
+<style>
+    [x-cloak] {
+        display: none !important;
+    }
+</style>
 @endsection
 
 <div>
@@ -142,8 +149,8 @@
                                         <i class="bi bi-pencil"></i>
                                     </button>
                                     @if($user->id !== auth()->id())
-                                        <button class="btn btn-sm btn-outline-danger" wire:click="deleteUser({{ $user->id }})" 
-                                                onclick="return confirm('آیا از حذف این کاربر مطمئن هستید؟')">
+                                        <button class="btn btn-sm btn-outline-danger" 
+                                                wire:click="confirmDelete('user', {{ $user->id }}, 'حذف کاربر {{ $user->name }} {{ $user->family }}')">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     @endif
@@ -225,8 +232,8 @@
                                     <button class="btn btn-sm btn-outline-primary" wire:click="editUnit({{ $unit->id }})">
                                         <i class="bi bi-pencil"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-outline-danger" wire:click="deleteUnit({{ $unit->id }})" 
-                                            onclick="return confirm('آیا از حذف این واحد مطمئن هستید؟')">
+                                    <button class="btn btn-sm btn-outline-danger" 
+                                            wire:click="confirmDelete('unit', {{ $unit->id }}, 'حذف واحد {{ $unit->name }}')">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </td>
@@ -315,8 +322,8 @@
                                     <button class="btn btn-sm btn-outline-primary" wire:click="editSystem({{ $system->id }})">
                                         <i class="bi bi-pencil"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-outline-danger" wire:click="deleteSystem({{ $system->id }})" 
-                                            onclick="return confirm('آیا از حذف این نرم‌افزار مطمئن هستید؟')">
+                                    <button class="btn btn-sm btn-outline-danger" 
+                                            wire:click="confirmDelete('system', {{ $system->id }}, 'حذف نرم‌افزار {{ $system->name_fa }}')">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </td>
@@ -347,19 +354,48 @@
         <div class="card-body">
             <form wire:submit.prevent="saveAccount">
                 <div class="row g-3">
-                    <div class="col-md-4">
+                    <div class="col-md-4" x-data="{ initSelect() { 
+                        setTimeout(() => {
+                            const el = document.getElementById('accountUserIdSelect');
+                            if (el && !el.tomselect) {
+                                new TomSelect(el, {
+                                    plugins: ['dropdown_input', 'clear_button'],
+                                    placeholder: 'جستجوی کاربر...',
+                                    maxItems: 1,
+                                    searchField: ['text']
+                                });
+                            }
+                        }, 300);
+                    } }" x-init="initSelect()">
                         <label class="form-label">کاربر <span class="text-danger">*</span></label>
-                        <select class="form-select @error('accountUserId') is-invalid @enderror" wire:model="accountUserId">
+                        <select class="form-select @error('accountUserId') is-invalid @enderror" 
+                                wire:model="accountUserId" 
+                                id="accountUserIdSelect">
                             <option value="">انتخاب کاربر...</option>
                             @foreach($usersList as $user)
-                                <option value="{{ $user->id }}">{{ $user->name }} {{ $user->family }}</option>
+                                <option value="{{ $user->id }}">{{ $user->name }} {{ $user->family }} ({{ $user->username }})</option>
                             @endforeach
                         </select>
                         @error('accountUserId') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
-                    <div class="col-md-4">
+
+                    <div class="col-md-4" x-data="{ initSelect() { 
+                        setTimeout(() => {
+                            const el = document.getElementById('accountUnitIdSelect');
+                            if (el && !el.tomselect) {
+                                new TomSelect(el, {
+                                    plugins: ['dropdown_input', 'clear_button'],
+                                    placeholder: 'جستجوی واحد...',
+                                    maxItems: 1,
+                                    searchField: ['text']
+                                });
+                            }
+                        }, 300);
+                    } }" x-init="initSelect()">
                         <label class="form-label">واحد <span class="text-danger">*</span></label>
-                        <select class="form-select @error('accountUnitId') is-invalid @enderror" wire:model="accountUnitId">
+                        <select class="form-select @error('accountUnitId') is-invalid @enderror" 
+                                wire:model="accountUnitId" 
+                                id="accountUnitIdSelect">
                             <option value="">انتخاب واحد...</option>
                             @foreach($unitsList as $unit)
                                 <option value="{{ $unit->id }}">{{ $unit->name }}</option>
@@ -367,9 +403,24 @@
                         </select>
                         @error('accountUnitId') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
-                    <div class="col-md-4">
+
+                    <div class="col-md-4" x-data="{ initSelect() { 
+                        setTimeout(() => {
+                            const el = document.getElementById('accountSystemIdSelect');
+                            if (el && !el.tomselect) {
+                                new TomSelect(el, {
+                                    plugins: ['dropdown_input', 'clear_button'],
+                                    placeholder: 'جستجوی نرم‌افزار...',
+                                    maxItems: 1,
+                                    searchField: ['text']
+                                });
+                            }
+                        }, 300);
+                    } }" x-init="initSelect()">
                         <label class="form-label">نرم‌افزار <span class="text-danger">*</span></label>
-                        <select class="form-select @error('accountSystemId') is-invalid @enderror" wire:model="accountSystemId">
+                        <select class="form-select @error('accountSystemId') is-invalid @enderror" 
+                                wire:model="accountSystemId" 
+                                id="accountSystemIdSelect">
                             <option value="">انتخاب نرم‌افزار...</option>
                             @foreach($systemsList as $system)
                                 <option value="{{ $system->id }}">{{ $system->name_fa }} ({{ $system->name_en ?? '---' }})</option>
@@ -384,7 +435,7 @@
                         @error('accountUsername') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label">رمز عبور <span class="text-danger">@if(!$isEditingAccount)*@endif</span></label>
+                        <label class="form-label">رمز عبور</label>
                         <input type="password" class="form-control @error('accountPassword') is-invalid @enderror" 
                                 wire:model="accountPassword" placeholder="رمز عبور">
                         @error('accountPassword') <div class="invalid-feedback">{{ $message }}</div> @enderror
@@ -492,8 +543,8 @@
                                     <button class="btn btn-sm btn-outline-primary" wire:click="editAccount({{ $account->id }})">
                                         <i class="bi bi-pencil"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-outline-danger" wire:click="deleteAccount({{ $account->id }})" 
-                                            onclick="return confirm('آیا از حذف این اکانت مطمئن هستید؟')">
+                                    <button class="btn btn-sm btn-outline-danger" 
+                                            wire:click="confirmDelete('account', {{ $account->id }}, 'حذف اکانت {{ $account->username }}')">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </td>
@@ -511,8 +562,161 @@
         </div>
     </div>
     @endif
+
+    <!-- ============================================ -->
+    <!-- مودال تأیید حذف با Alpine.js -->
+    <!-- ============================================ -->
+    <div x-data="{ 
+        show: false,
+        title: '',
+        message: '',
+        type: '',
+        id: null,
+        loading: false
+    }"
+    x-init="() => {
+        window.addEventListener('show-delete-modal', () => {
+            show = true;
+            const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            modal.show();
+        });
+        window.addEventListener('hide-delete-modal', () => {
+            show = false;
+            const modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+            if (modal) modal.hide();
+        });
+    }"
+    style="display: none;"
+    x-show="show"
+    x-cloak>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true" wire:ignore.self>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        تأیید حذف
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" @click="show = false"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center py-3">
+                        <i class="bi bi-trash3 text-danger" style="font-size: 3rem;"></i>
+                        <h5 class="mt-3">{{ $deleteModalTitle }}</h5>
+                        <p class="text-muted">{{ $deleteModalMessage }}</p>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" wire:click="cancelDelete">
+                        <i class="bi bi-x-circle"></i> انصراف
+                    </button>
+                    <button type="button" class="btn btn-danger" wire:click="performDelete" wire:loading.attr="disabled">
+                        <span wire:loading.remove><i class="bi bi-trash"></i> تأیید حذف</span>
+                        <span wire:loading><span class="spinner-border spinner-border-sm"></span> در حال حذف...</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section('script')
+<!-- TomSelect JS -->
+<script src="{{asset('assets/lib/tom-select/tom-select.complete.min.js')}}"></script>
 
+<script>
+// ===== فعال‌سازی TomSelect برای سلکت‌باکس‌ها =====
+function initTomSelect() {
+    try {
+        // بررسی اینکه آیا در تب اکانت‌ها هستیم
+        const isAccountsTab = document.querySelector('.nav-link.active')?.textContent?.includes('اکانت‌های SFTP') || 
+                              document.querySelector('.nav-link.active')?.getAttribute('wire:click')?.includes('accounts');
+        
+        // اگر در تب اکانت‌ها نیستیم، سلکت‌ها را غیرفعال کن
+        if (!isAccountsTab) {
+            // اگر TomSelect قبلاً روی سلکت‌ها فعال شده، آنها را نابود کن
+            ['accountUserIdSelect', 'accountUnitIdSelect', 'accountSystemIdSelect'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.tomselect) {
+                    el.tomselect.destroy();
+                }
+            });
+            return;
+        }
+
+        setTimeout(() => {
+            // سلکت کاربران
+            const userSelect = document.getElementById('accountUserIdSelect');
+            if (userSelect && !userSelect.tomselect) {
+                new TomSelect(userSelect, {
+                    plugins: ['dropdown_input', 'clear_button'],
+                    placeholder: 'جستجوی کاربر...',
+                    maxItems: 1,
+                    searchField: ['text'],
+                    render: {
+                        option: function(data, escape) {
+                            return '<div class="py-1 px-2">' + escape(data.text) + '</div>';
+                        }
+                    }
+                });
+                console.log('✅ TomSelect - کاربران فعال شد');
+            }
+
+            // سلکت واحدها
+            const unitSelect = document.getElementById('accountUnitIdSelect');
+            if (unitSelect && !unitSelect.tomselect) {
+                new TomSelect(unitSelect, {
+                    plugins: ['dropdown_input', 'clear_button'],
+                    placeholder: 'جستجوی واحد...',
+                    maxItems: 1,
+                    searchField: ['text']
+                });
+                console.log('✅ TomSelect - واحدها فعال شد');
+            }
+
+            // سلکت نرم‌افزارها
+            const systemSelect = document.getElementById('accountSystemIdSelect');
+            if (systemSelect && !systemSelect.tomselect) {
+                new TomSelect(systemSelect, {
+                    plugins: ['dropdown_input', 'clear_button'],
+                    placeholder: 'جستجوی نرم‌افزار...',
+                    maxItems: 1,
+                    searchField: ['text']
+                });
+                console.log('✅ TomSelect - نرم‌افزارها فعال شد');
+            }
+        }, 400);
+        
+    } catch (e) {
+        console.warn('⚠️ خطا در فعال‌سازی TomSelect:', e);
+    }
+}
+
+// اجرا بعد از هر بار رندر Livewire
+document.addEventListener('livewire:update', function() {
+    // با تاخیر کوتاه تا DOM کامل به‌روز شود
+    setTimeout(initTomSelect, 300);
+});
+
+// اجرا در بارگذاری اولیه
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(initTomSelect, 500);
+});
+
+// اجرا بعد از تغییر تب (با MutationObserver)
+const observer = new MutationObserver(function() {
+    // بررسی تغییرات در تب‌ها
+    const activeTab = document.querySelector('.nav-link.active');
+    if (activeTab) {
+        setTimeout(initTomSelect, 300);
+    }
+});
+observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['class']
+});
+</script>
 @endsection
