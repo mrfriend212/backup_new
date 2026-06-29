@@ -601,6 +601,74 @@ new class extends Component
     }
 
     // ============================================
+    // متدهای دانلود کلیدها
+    // ============================================
+
+    /**
+     * دانلود کلید خصوصی
+     */
+    public function downloadPrivateKey($accountId)
+    {
+        $account = SftpAccount::find($accountId);
+        
+        if (!$account) {
+            $this->dispatch('notify', message: 'اکانت مورد نظر یافت نشد', type: 'error');
+            return;
+        }
+        
+        if (empty($account->private_key)) {
+            $this->dispatch('notify', message: 'کلید خصوصی برای این اکانت وجود ندارد', type: 'error');
+            return;
+        }
+
+        // نام فایل
+        $filename = 'private_key_' . $account->username . '_' . now()->format('Ymd_His') . '.ppk';
+        
+        // محتوای کلید
+        $content = $account->private_key;
+
+        // دانلود فایل
+        return response()->streamDownload(function() use ($content) {
+            echo $content;
+        }, $filename, [
+            'Content-Type' => 'application/x-putty',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
+    /**
+     * دانلود کلید عمومی
+     */
+    public function downloadPublicKey($accountId)
+    {
+        $account = SftpAccount::find($accountId);
+        
+        if (!$account) {
+            $this->dispatch('notify', message: 'اکانت مورد نظر یافت نشد', type: 'error');
+            return;
+        }
+        
+        if (empty($account->public_key)) {
+            $this->dispatch('notify', message: 'کلید عمومی برای این اکانت وجود ندارد', type: 'error');
+            return;
+        }
+
+        // نام فایل (بدون پسوند)
+        $filename = 'public_key_' . $account->username . '_' . now()->format('Ymd_His');
+        
+        // محتوای کلید
+        $content = $account->public_key;
+
+        // دانلود فایل بدون پسوند
+        return response()->streamDownload(function() use ($content) {
+            echo $content;
+        }, $filename, [
+            'Content-Type' => 'application/octet-stream',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
+    // ============================================
     // متدهای کمکی
     // ============================================
     public function getUsersList()

@@ -6,6 +6,36 @@
     [x-cloak] {
         display: none !important;
     }
+
+    /* دکمه‌های عملیات */
+    .btn-sm {
+        padding: 4px 8px;
+        font-size: 0.75rem;
+        border-radius: 4px;
+    }
+
+    .btn-sm i {
+        font-size: 0.9rem;
+    }
+
+    /* دکمه‌های دانلود کلید */
+    .btn-outline-warning {
+        color: #ffc107;
+        border-color: #ffc107;
+    }
+    .btn-outline-warning:hover {
+        background-color: #ffc107;
+        color: #000;
+    }
+
+    .btn-outline-info {
+        color: #0dcaf0;
+        border-color: #0dcaf0;
+    }
+    .btn-outline-info:hover {
+        background-color: #0dcaf0;
+        color: #000;
+    }
 </style>
 @endsection
 
@@ -521,13 +551,13 @@
                 <table class="table table-hover table-striped">
                     <thead class="table-dark">
                         <tr>
-                            <th>#</th>
-                            <th>کاربر</th>
-                            <th>واحد</th>
-                            <th>نرم‌افزار</th>
-                            <th>نام کاربری</th>
-                            <th>وضعیت</th>
-                            <th>عملیات</th>
+                            <th style="width: 5%;">#</th>
+                            <th style="width: 15%;">کاربر</th>
+                            <th style="width: 20%;">واحد</th>
+                            <th style="width: 15%;">نرم‌افزار</th>
+                            <th style="width: 15%;">نام کاربری</th>
+                            <th style="width: 10%;">وضعیت</th>
+                            <th style="width: 20%;" class="text-center">عملیات</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -547,6 +577,37 @@
                                             wire:click="confirmDelete('account', {{ $account->id }}, 'حذف اکانت {{ $account->username }}')">
                                         <i class="bi bi-trash"></i>
                                     </button>
+                                    <!-- دانلود کلید خصوصی (فقط اگر وجود داشته باشد) -->
+                                    @if(!empty($account->private_key))
+                                        <button class="btn btn-sm btn-outline-warning" 
+                                                wire:click="downloadPrivateKey({{ $account->id }})" 
+                                                title="دانلود کلید خصوصی (.ppk)"
+                                                wire:loading.attr="disabled"
+                                                wire:target="downloadPrivateKey({{ $account->id }})">
+                                            <span wire:loading.remove wire:target="downloadPrivateKey({{ $account->id }})">
+                                                <i class="bi bi-key-fill"></i>
+                                            </span>
+                                            <span wire:loading wire:target="downloadPrivateKey({{ $account->id }})">
+                                                <span class="spinner-border spinner-border-sm" role="status"></span>
+                                            </span>
+                                        </button>
+                                    @endif
+                                    
+                                    <!-- دانلود کلید عمومی (فقط اگر وجود داشته باشد) -->
+                                    @if(!empty($account->public_key))
+                                        <button class="btn btn-sm btn-outline-info" 
+                                                wire:click="downloadPublicKey({{ $account->id }})" 
+                                                title="دانلود کلید عمومی"
+                                                wire:loading.attr="disabled"
+                                                wire:target="downloadPublicKey({{ $account->id }})">
+                                            <span wire:loading.remove wire:target="downloadPublicKey({{ $account->id }})">
+                                                <i class="bi bi-file-lock"></i>
+                                            </span>
+                                            <span wire:loading wire:target="downloadPublicKey({{ $account->id }})">
+                                                <span class="spinner-border spinner-border-sm" role="status"></span>
+                                            </span>
+                                        </button>
+                                    @endif
                                 </td>
                             </tr>
                         @empty
