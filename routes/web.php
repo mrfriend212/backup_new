@@ -19,6 +19,7 @@ Route::get('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->n
 /********  Admin Routes  *********/
 Route::middleware(['auth','not_direct_access_to_page'])->prefix('panel/admin')->name('panel.admin.')->group(function () {
     Route::livewire('/dahboard', 'pages::admin.dashboard')->name('dashboard');
+    Route::livewire('/management', 'pages::admin.management')->name('management');
 });
 
 

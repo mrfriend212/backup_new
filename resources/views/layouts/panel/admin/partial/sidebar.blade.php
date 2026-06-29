@@ -10,6 +10,11 @@
                     <i class="bi bi-speedometer2 fs-5"></i> <span>داشبورد</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link rounded d-flex align-items-center mb-1 text-white gap-3" href="{{ route('panel.admin.management') }}" target="main-frame">
+                    <i class="bi bi-gear-fill fs-5"></i> <span>مدیریت سیستم</span>
+                </a>
+            </li>
         </ul>
 
         <!-- Logout Button fixed at bottom of sidebar -->
