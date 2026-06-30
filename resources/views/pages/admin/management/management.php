@@ -8,6 +8,8 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use phpseclib3\Crypt\RSA;
+use phpseclib3\Crypt\PublicKeyLoader;
 
 new class extends Component
 {
@@ -62,6 +64,105 @@ new class extends Component
     public $deleteModalTitle = '';
     public $deleteModalMessage = '';
     public $showDeleteModal = false;
+
+    // ===== متغیرهای مربوط به تولید کلید =====
+    public $keyGenerateAccountId = null;
+    public $keyComment = '';
+    public $keyPassphrase = '';
+    public $keyConfirmPassphrase = '';
+    public $keyGeneratedPrivate = '';
+    public $keyGeneratedPublic = '';
+    public $keyGenerationError = '';
+
+     /**
+     * باز کردن مودال تولید کلید
+     */
+    public function openKeyGenerationModal($accountId)
+    {
+        $this->keyGenerateAccountId = $accountId;
+        $this->keyComment = 'rsa-key-' . now()->format('Ymd');
+        $this->keyPassphrase = '';
+        $this->keyConfirmPassphrase = '';
+        $this->keyGeneratedPrivate = '';
+        $this->keyGeneratedPublic = '';
+        $this->keyGenerationError = '';
+        
+        $this->dispatch('show-key-modal');
+    }
+
+    /**
+     * بستن مودال تولید کلید
+     */
+    public function closeKeyModal()
+    {
+        $this->reset([
+            'keyGenerateAccountId',
+            'keyComment',
+            'keyPassphrase',
+            'keyConfirmPassphrase',
+            'keyGeneratedPrivate',
+            'keyGeneratedPublic',
+            'keyGenerationError'
+        ]);
+        $this->dispatch('hide-key-modal');
+    }
+
+   /**
+     * تولید کلید RSA با 4096 بیت (روش جایگزین)
+     */
+    public function generateKeysForAccount()
+    {
+        // اعتبارسنجی
+        $this->validate([
+            'keyComment' => 'required|string|max:255',
+            'keyPassphrase' => 'required|string|min:4|max:255',
+            'keyConfirmPassphrase' => 'required|string|min:4|max:255',
+        ]);
+
+        // بررسی تطابق پسوردها
+        if ($this->keyPassphrase !== $this->keyConfirmPassphrase) {
+            $this->keyGenerationError = 'رمز عبور و تکرار آن مطابقت ندارند!';
+            return;
+        }
+
+        try {
+            // پیدا کردن اکانت
+            $account = SftpAccount::find($this->keyGenerateAccountId);
+            if (!$account) {
+                $this->keyGenerationError = 'اکانت مورد نظر یافت نشد!';
+                return;
+            }
+
+            // ✅ تولید کلید RSA با 4096 بیت
+            $rsa = RSA::createKey(4096);
+
+            // ✅ دریافت کلید خصوصی با پسورد
+            $privateKey = $rsa->toString('PKCS8', ['password' => $this->keyPassphrase]);
+            
+            // ✅ دریافت کلید عمومی
+            $publicKey = $rsa->getPublicKey()->toString('PKCS8');
+
+            // ✅ اضافه کردن Comment به صورت دستی به کلید عمومی
+            // (در برخی نسخه‌ها Comment به انتهای کلید عمومی اضافه میشه)
+            $publicKeyWithComment = $publicKey . ' ' . $this->keyComment;
+
+            // ذخیره در دیتابیس
+            $account->private_key = $privateKey;
+            $account->public_key = $publicKeyWithComment;
+            $account->passphrase = $this->keyPassphrase;
+            $account->save();
+
+            // ذخیره در متغیرهای کامپوننت برای نمایش در مودال
+            $this->keyGeneratedPrivate = $privateKey;
+            $this->keyGeneratedPublic = $publicKeyWithComment;
+            $this->keyGenerationError = '';
+
+            $this->dispatch('notify', message: '✅ کلیدهای SSH با موفقیت تولید و ذخیره شدند!', type: 'success');
+
+        } catch (\Exception $e) {
+            $this->keyGenerationError = 'خطا در تولید کلید: ' . $e->getMessage();
+        }
+    }
 
     public function confirmDelete($type, $id, $title = '')
     {

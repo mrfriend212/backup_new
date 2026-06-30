@@ -36,6 +36,33 @@
         background-color: #0dcaf0;
         color: #000;
     }
+
+    /* استایل مودال تولید کلید */
+    #keyGenerationModal .modal-content {
+        border-radius: 16px;
+        border: none;
+    }
+
+    #keyGenerationModal .modal-header {
+        border-radius: 16px 16px 0 0;
+    }
+
+    #keyGenerationModal textarea {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    #keyGenerationModal .alert-info {
+        background-color: #e7f5ff;
+        border-color: #b8daff;
+    }
+
+    #keyGenerationModal .btn-success {
+        padding: 10px;
+        font-weight: 500;
+    }
 </style>
 @endsection
 
@@ -577,6 +604,12 @@
                                             wire:click="confirmDelete('account', {{ $account->id }}, 'حذف اکانت {{ $account->username }}')">
                                         <i class="bi bi-trash"></i>
                                     </button>
+                                    <!-- ⭐ دکمه تولید کلیدها -->
+                                    <button class="btn btn-sm btn-outline-success" 
+                                            wire:click="openKeyGenerationModal({{ $account->id }})" 
+                                            title="تولید کلیدهای SSH">
+                                        <i class="bi bi-key"></i>
+                                    </button>
                                     <!-- دانلود کلید خصوصی (فقط اگر وجود داشته باشد) -->
                                     @if(!empty($account->private_key))
                                         <button class="btn btn-sm btn-outline-warning" 
@@ -623,6 +656,113 @@
         </div>
     </div>
     @endif
+
+    <!-- ============================================ -->
+    <!-- مودال تولید کلیدهای SSH -->
+    <!-- ============================================ -->
+    <div class="modal fade" id="keyGenerationModal" tabindex="-1" aria-hidden="true" wire:ignore.self>
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-key"></i>
+                        تولید کلیدهای SSH
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @if($keyGenerationError)
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            {{ $keyGenerationError }}
+                        </div>
+                    @endif
+
+                    @if($keyGeneratedPrivate && $keyGeneratedPublic)
+                        <!-- نمایش کلیدهای تولید شده -->
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle-fill"></i>
+                            کلیدها با موفقیت تولید و در دیتابیس ذخیره شدند!
+                        </div>
+                        
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label fw-bold">کلید خصوصی</label>
+                                <textarea class="form-control" rows="8" readonly style="font-family: monospace; font-size: 12px;">{{ $keyGeneratedPrivate }}</textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold">کلید عمومی</label>
+                                <textarea class="form-control" rows="3" readonly style="font-family: monospace; font-size: 12px;">{{ $keyGeneratedPublic }}</textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <button class="btn btn-sm btn-outline-warning" 
+                                    wire:click="downloadPrivateKey({{ $keyGenerateAccountId }})">
+                                <i class="bi bi-download"></i> دانلود کلید خصوصی (.ppk)
+                            </button>
+                            <button class="btn btn-sm btn-outline-info" 
+                                    wire:click="downloadPublicKey({{ $keyGenerateAccountId }})">
+                                <i class="bi bi-download"></i> دانلود کلید عمومی
+                            </button>
+                        </div>
+                    @else
+                        <!-- فرم تولید کلید -->
+                        <form wire:submit.prevent="generateKeysForAccount">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label">Key Comment <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control @error('keyComment') is-invalid @enderror" 
+                                        wire:model="keyComment" placeholder="مثلاً: rsa-key-20260630-server">
+                                    <small class="text-muted">توضیحی برای شناسایی کلید (مثلاً نام سرور یا کاربر)</small>
+                                    @error('keyComment') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                </div>
+                                
+                                <div class="col-12">
+                                    <label class="form-label">کلید پسورد (Passphrase) <span class="text-danger">*</span></label>
+                                    <input type="password" class="form-control @error('keyPassphrase') is-invalid @enderror" 
+                                        wire:model="keyPassphrase" placeholder="رمز عبور برای کلید خصوصی">
+                                    <small class="text-muted">حداقل ۴ کاراکتر</small>
+                                    @error('keyPassphrase') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                </div>
+                                
+                                <div class="col-12">
+                                    <label class="form-label">تکرار کلید پسورد <span class="text-danger">*</span></label>
+                                    <input type="password" class="form-control @error('keyConfirmPassphrase') is-invalid @enderror" 
+                                        wire:model="keyConfirmPassphrase" placeholder="دوباره رمز عبور را وارد کنید">
+                                    @error('keyConfirmPassphrase') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                </div>
+                                
+                                <div class="col-12">
+                                    <div class="alert alert-info">
+                                        <i class="bi bi-info-circle"></i>
+                                        <strong>تولید کلید RSA با 4096 بیت</strong> - این فرآیند ممکن است چند ثانیه طول بکشد.
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-success w-100" wire:loading.attr="disabled">
+                                        <span wire:loading.remove>
+                                            <i class="bi bi-key"></i> تولید کلیدها
+                                        </span>
+                                        <span wire:loading>
+                                            <span class="spinner-border spinner-border-sm" role="status"></span>
+                                            در حال تولید کلیدها...
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    @endif
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" wire:click="closeKeyModal">
+                        <i class="bi bi-x-circle"></i> بستن
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- ============================================ -->
     <!-- مودال تأیید حذف با Alpine.js -->
@@ -855,6 +995,24 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 5000);
     });
+});
+
+// ===== مدیریت مودال تولید کلید =====
+window.addEventListener('show-key-modal', event => {
+    const modal = new bootstrap.Modal(document.getElementById('keyGenerationModal'));
+    modal.show();
+});
+
+window.addEventListener('hide-key-modal', event => {
+    const modal = bootstrap.Modal.getInstance(document.getElementById('keyGenerationModal'));
+    if (modal) modal.hide();
+});
+
+// وقتی مودال بسته میشه، فرم رو ریست کن
+document.addEventListener('hidden.bs.modal', function (event) {
+    if (event.target.id === 'keyGenerationModal') {
+        @this.closeKeyModal();
+    }
 });
 </script>
 @endsection
