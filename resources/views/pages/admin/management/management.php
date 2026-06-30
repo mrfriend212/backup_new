@@ -108,7 +108,7 @@ new class extends Component
     }
 
    /**
-     * تولید کلید RSA با 4096 بیت (روش جایگزین)
+     * تولید کلید RSA با 4096 بیت (فرمت PuTTY با پسورد - نسخه نهایی)
      */
     public function generateKeysForAccount()
     {
@@ -119,45 +119,47 @@ new class extends Component
             'keyConfirmPassphrase' => 'required|string|min:4|max:255',
         ]);
 
-        // بررسی تطابق پسوردها
         if ($this->keyPassphrase !== $this->keyConfirmPassphrase) {
             $this->keyGenerationError = 'رمز عبور و تکرار آن مطابقت ندارند!';
             return;
         }
 
         try {
-            // پیدا کردن اکانت
             $account = SftpAccount::find($this->keyGenerateAccountId);
             if (!$account) {
                 $this->keyGenerationError = 'اکانت مورد نظر یافت نشد!';
                 return;
             }
 
-            // ✅ تولید کلید RSA با 4096 بیت
+            // ✅ تولید کلید با phpseclib
             $rsa = RSA::createKey(4096);
 
-            // ✅ دریافت کلید خصوصی با پسورد
-            $privateKey = $rsa->toString('PKCS8', ['password' => $this->keyPassphrase]);
+            // ✅ کلید خصوصی به فرمت PKCS8 با پسورد
+            $privateKeyPem = $rsa->toString('PKCS8', ['password' => $this->keyPassphrase]);
             
-            // ✅ دریافت کلید عمومی
-            $publicKey = $rsa->getPublicKey()->toString('PKCS8');
+            // ✅ تبدیل به PuTTY با استفاده از passphrase (نه password!)
+            $rsaLoaded = PublicKeyLoader::loadPrivateKey($privateKeyPem, $this->keyPassphrase);
+            $privateKey = $rsaLoaded->toString('PuTTY', [
+                'comment'    => $this->keyComment,
+                'passphrase' => $this->keyPassphrase  // ✅ اینجا passphrase درست است!
+            ]);
 
-            // ✅ اضافه کردن Comment به صورت دستی به کلید عمومی
-            // (در برخی نسخه‌ها Comment به انتهای کلید عمومی اضافه میشه)
-            $publicKeyWithComment = $publicKey . ' ' . $this->keyComment;
+            // ✅ کلید عمومی
+            $publicKey = $rsa->getPublicKey()->toString('OpenSSH', [
+                'comment' => $this->keyComment
+            ]);
 
             // ذخیره در دیتابیس
             $account->private_key = $privateKey;
-            $account->public_key = $publicKeyWithComment;
+            $account->public_key = $publicKey;
             $account->passphrase = $this->keyPassphrase;
             $account->save();
 
-            // ذخیره در متغیرهای کامپوننت برای نمایش در مودال
             $this->keyGeneratedPrivate = $privateKey;
-            $this->keyGeneratedPublic = $publicKeyWithComment;
+            $this->keyGeneratedPublic = $publicKey;
             $this->keyGenerationError = '';
 
-            $this->dispatch('notify', message: '✅ کلیدهای SSH با موفقیت تولید و ذخیره شدند!', type: 'success');
+            $this->dispatch('notify', message: '✅ کلیدهای PuTTY با موفقیت تولید و ذخیره شدند!', type: 'success');
 
         } catch (\Exception $e) {
             $this->keyGenerationError = 'خطا در تولید کلید: ' . $e->getMessage();
@@ -738,7 +740,7 @@ new class extends Component
     }
 
     /**
-     * دانلود کلید عمومی
+     * دانلود کلید عمومی (فرمت PuTTY)
      */
     public function downloadPublicKey($accountId)
     {
@@ -760,7 +762,7 @@ new class extends Component
         // محتوای کلید
         $content = $account->public_key;
 
-        // دانلود فایل بدون پسوند
+        // دانلود فایل بدون پسوند با فرمت PuTTY
         return response()->streamDownload(function() use ($content) {
             echo $content;
         }, $filename, [
