@@ -107,9 +107,58 @@ new class extends Component
         $this->dispatch('hide-key-modal');
     }
 
-   /**
-     * تولید کلید RSA با 4096 بیت (فرمت PuTTY با پسورد - نسخه نهایی)
+    /**
+     * تولید کلید RSA با 4096 بیت با phpseclib3 (فرمت PuTTY با پسورد)
      */
+    public function generateKeysWithPhpseclib($comment, $passphrase)
+    {
+        try {
+            // ✅ 1. تولید کلید RSA
+            $rsa = RSA::createKey(4096);
+
+            // ✅ 2. کلید خصوصی به فرمت PEM با پسورد
+            $privateKeyPem = $rsa->toString('PKCS8', ['password' => $passphrase]);
+
+            // ✅ 3. تبدیل PEM به PuTTY با حفظ پسورد
+            // بارگذاری کلید PEM با پسورد
+            $loadedKey = PublicKeyLoader::loadPrivateKey($privateKeyPem, $passphrase);
+            
+            // تبدیل به PuTTY با پسورد
+            $privateKey = $loadedKey->toString('PuTTY', [
+                'comment' => $comment,
+                'password' => $passphrase  // اینجا password هست نه passphrase!
+            ]);
+
+            // ✅ 4. کلید عمومی با Comment
+            $publicKey = $rsa->getPublicKey()->toString('OpenSSH', [
+                'comment' => $comment
+            ]);
+
+            // ✅ 5. بررسی: کلید رو با پسورد لود کن تا مطمئن بشیم پسورد درست ذخیره شده
+            try {
+                $testLoad = PublicKeyLoader::loadPrivateKey($privateKey, $passphrase);
+                if (!$testLoad) {
+                    throw new \Exception('کلید با پسورد قابل لود نیست');
+                }
+            } catch (\Exception $e) {
+                // اگر با پسورد لود نشد، یعنی پسورد درست ذخیره نشده
+                throw new \Exception('پسورد به درستی روی کلید ذخیره نشد');
+            }
+
+            return [
+                'success' => true,
+                'private_key' => $privateKey,
+                'public_key' => $publicKey,
+            ];
+
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'error' => 'خطا در تولید کلید: ' . $e->getMessage()
+            ];
+        }
+    }
+
     public function generateKeysForAccount()
     {
         // اعتبارسنجی
@@ -131,32 +180,25 @@ new class extends Component
                 return;
             }
 
-            // ✅ تولید کلید با phpseclib
-            $rsa = RSA::createKey(4096);
+            // ✅ تولید کلید
+            $result = $this->generateKeysWithPhpseclib(
+                $this->keyComment,
+                $this->keyPassphrase
+            );
 
-            // ✅ کلید خصوصی به فرمت PKCS8 با پسورد
-            $privateKeyPem = $rsa->toString('PKCS8', ['password' => $this->keyPassphrase]);
-            
-            // ✅ تبدیل به PuTTY با استفاده از passphrase (نه password!)
-            $rsaLoaded = PublicKeyLoader::loadPrivateKey($privateKeyPem, $this->keyPassphrase);
-            $privateKey = $rsaLoaded->toString('PuTTY', [
-                'comment'    => $this->keyComment,
-                'passphrase' => $this->keyPassphrase  // ✅ اینجا passphrase درست است!
-            ]);
-
-            // ✅ کلید عمومی
-            $publicKey = $rsa->getPublicKey()->toString('OpenSSH', [
-                'comment' => $this->keyComment
-            ]);
+            if (!$result['success']) {
+                $this->keyGenerationError = $result['error'];
+                return;
+            }
 
             // ذخیره در دیتابیس
-            $account->private_key = $privateKey;
-            $account->public_key = $publicKey;
+            $account->private_key = $result['private_key'];
+            $account->public_key = $result['public_key'];
             $account->passphrase = $this->keyPassphrase;
             $account->save();
 
-            $this->keyGeneratedPrivate = $privateKey;
-            $this->keyGeneratedPublic = $publicKey;
+            $this->keyGeneratedPrivate = $result['private_key'];
+            $this->keyGeneratedPublic = $result['public_key'];
             $this->keyGenerationError = '';
 
             $this->dispatch('notify', message: '✅ کلیدهای PuTTY با موفقیت تولید و ذخیره شدند!', type: 'success');
